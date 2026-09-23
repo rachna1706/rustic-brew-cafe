@@ -1,0 +1,54 @@
+[
+  {
+    "customer_id": 1,
+    "order_id": "TEST001",
+    "order_details": [],
+    "total_amount": 100,
+    "payment_method": "UPI",
+    "created_at": "2026-09-23T17:09:01.934Z"
+  },
+  {
+    "customer_id": 0,
+    "order_id": "ORD-10262",
+    "order_details": [
+      {
+        "id": "cheesy-overload",
+        "name": "Cheesy Overload Chicken Burger",
+        "size": "",
+        "addons": [],
+        "choose": [],
+        "qty": 1,
+        "notes": "",
+        "total": 250
+      },
+      {
+        "id": "cafe-classic",
+        "name": "Cafe Classic",
+        "size": "Small",
+        "addons": [],
+        "choose": [
+          {
+            "label": "Milk",
+            "value": "Regular Milk"
+          }
+        ],
+        "qty": 1,
+        "notes": "",
+        "total": 120
+      },
+      {
+        "id": "strawberry-cheesecake",
+        "name": "Strawberry Cheesecake Pops",
+        "size": "",
+        "addons": [],
+        "choose": [],
+        "qty": 1,
+        "notes": "",
+        "total": 160
+      }
+    ],
+    "total_amount": 530,
+    "payment_method": "netbanking",
+    "created_at": "2026-09-23T17:42:46.684Z"
+  }
+]
