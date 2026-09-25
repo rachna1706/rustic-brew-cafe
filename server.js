@@ -5,27 +5,29 @@ const path = require("path");
 const { Pool } = require("pg");
 
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 
-/* =========================================================
-   DATABASE CONNECTION
-   ========================================================= */
+
+// =====================================================
+// DATABASE CONNECTION
+// =====================================================
 
 const hasDatabase = !!process.env.DATABASE_URL;
 
 const pool = hasDatabase
     ? new Pool({
-          connectionString: process.env.DATABASE_URL,
-          ssl: {
-              rejectUnauthorized: false
-          }
-      })
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+            rejectUnauthorized: false
+        }
+    })
     : null;
 
 
-/* =========================================================
-   EXPRESS SETUP
-   ========================================================= */
+// =====================================================
+// EXPRESS SETUP
+// =====================================================
 
 app.use(express.json({ limit: "5mb" }));
 
@@ -37,12 +39,13 @@ const customersFile = path.join(__dirname, "customers.json");
 app.use(express.static(publicFolder));
 
 
-/* =========================================================
-   JSON FILE FUNCTIONS
-   ========================================================= */
+// =====================================================
+// JSON FILE FUNCTIONS
+// =====================================================
 
 function readJSON(file) {
     try {
+
         if (!fs.existsSync(file)) {
             fs.writeFileSync(file, "[]");
         }
@@ -56,7 +59,9 @@ function readJSON(file) {
         return JSON.parse(content);
 
     } catch (error) {
+
         console.error("JSON read error:", error);
+
         return [];
     }
 }
@@ -64,26 +69,31 @@ function readJSON(file) {
 
 function writeJSON(file, data) {
     try {
+
         fs.writeFileSync(
             file,
             JSON.stringify(data, null, 2)
         );
+
     } catch (error) {
+
         console.error("JSON write error:", error);
     }
 }
 
 
-/* =========================================================
-   POSTGRESQL DATABASE INITIALIZATION
-   ========================================================= */
+// =====================================================
+// POSTGRESQL DATABASE INITIALIZATION
+// =====================================================
 
 async function initializeDatabase() {
 
     if (!hasDatabase) {
+
         console.log(
             "DATABASE_URL not found. Running without PostgreSQL."
         );
+
         return;
     }
 
@@ -93,7 +103,7 @@ async function initializeDatabase() {
             CREATE TABLE IF NOT EXISTS customers (
                 id SERIAL PRIMARY KEY,
                 name TEXT,
-                phone TEXT,
+                phone TEXT UNIQUE,
                 lang TEXT DEFAULT 'en',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
@@ -127,9 +137,9 @@ async function initializeDatabase() {
 }
 
 
-/* =========================================================
-   CUSTOMER API
-   ========================================================= */
+// =====================================================
+// CUSTOMER API
+// =====================================================
 
 app.post("/api/customer", async (req, res) => {
 
@@ -140,9 +150,9 @@ app.post("/api/customer", async (req, res) => {
         const lang = req.body.lang || "en";
 
 
-        /* ---------------------------------------------
-           PostgreSQL
-           --------------------------------------------- */
+        // -----------------------------
+        // PostgreSQL
+        // -----------------------------
 
         if (hasDatabase) {
 
@@ -167,7 +177,9 @@ app.post("/api/customer", async (req, res) => {
             const customerId = result.rows[0].id;
 
 
-            /* Local JSON backup */
+            // -----------------------------
+            // JSON BACKUP
+            // -----------------------------
 
             try {
 
@@ -204,9 +216,9 @@ app.post("/api/customer", async (req, res) => {
         }
 
 
-        /* ---------------------------------------------
-           Local fallback if PostgreSQL isn't available
-           --------------------------------------------- */
+        // -----------------------------
+        // LOCAL FALLBACK
+        // -----------------------------
 
         const customers =
             readJSON(customersFile);
@@ -262,9 +274,9 @@ app.post("/api/customer", async (req, res) => {
 });
 
 
-/* =========================================================
-   ORDER API
-   ========================================================= */
+// =====================================================
+// ORDER API
+// =====================================================
 
 app.post("/api/order", async (req, res) => {
 
@@ -286,9 +298,9 @@ app.post("/api/order", async (req, res) => {
             req.body.payment_method || "";
 
 
-        /* ---------------------------------------------
-           PostgreSQL
-           --------------------------------------------- */
+        // -----------------------------
+        // PostgreSQL
+        // -----------------------------
 
         if (hasDatabase) {
 
@@ -316,7 +328,9 @@ app.post("/api/order", async (req, res) => {
             );
 
 
-            /* Local JSON backup */
+            // -----------------------------
+            // JSON BACKUP
+            // -----------------------------
 
             try {
 
@@ -372,9 +386,9 @@ app.post("/api/order", async (req, res) => {
         }
 
 
-        /* ---------------------------------------------
-           Local fallback if PostgreSQL isn't available
-           --------------------------------------------- */
+        // -----------------------------
+        // LOCAL FALLBACK
+        // -----------------------------
 
         const orders =
             readJSON(ordersFile);
@@ -441,67 +455,9 @@ app.post("/api/order", async (req, res) => {
 });
 
 
-/* =========================================================
-   GET ORDERS
-   Useful for dashboard/testing
-   ========================================================= */
-
-app.get("/api/orders", async (req, res) => {
-
-    try {
-
-        if (hasDatabase) {
-
-            const result =
-                await pool.query(`
-                    SELECT *
-                    FROM orders
-                    ORDER BY created_at DESC
-                `);
-
-            return res.json({
-                success: true,
-                orders: result.rows
-            });
-        }
-
-
-        const orders =
-            readJSON(ordersFile);
-
-
-        res.json({
-
-            success: true,
-
-            orders:
-                orders.reverse()
-        });
-
-
-    } catch (error) {
-
-        console.error(
-            "Get orders error:",
-            error
-        );
-
-
-        res.status(500).json({
-
-            success: false,
-
-            message:
-                "Could not get orders"
-        });
-    }
-});
-
-
-/* =========================================================
-   GET CUSTOMERS
-   Useful for dashboard/testing
-   ========================================================= */
+// =====================================================
+// GET CUSTOMERS
+// =====================================================
 
 app.get("/api/customers", async (req, res) => {
 
@@ -558,9 +514,68 @@ app.get("/api/customers", async (req, res) => {
 });
 
 
-/* =========================================================
-   LIVE SERVER STATISTICS
-   ========================================================= */
+// =====================================================
+// GET ORDERS
+// =====================================================
+
+app.get("/api/orders", async (req, res) => {
+
+    try {
+
+        if (hasDatabase) {
+
+            const result =
+                await pool.query(`
+                    SELECT *
+                    FROM orders
+                    ORDER BY created_at DESC
+                `);
+
+            return res.json({
+
+                success: true,
+
+                orders:
+                    result.rows
+            });
+        }
+
+
+        const orders =
+            readJSON(ordersFile);
+
+
+        res.json({
+
+            success: true,
+
+            orders:
+                orders.reverse()
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Get orders error:",
+            error
+        );
+
+
+        res.status(500).json({
+
+            success: false,
+
+            message:
+                "Could not get orders"
+        });
+    }
+});
+
+
+// =====================================================
+// SERVER STATISTICS
+// =====================================================
 
 app.get("/api/stats", (req, res) => {
 
@@ -633,6 +648,7 @@ app.get("/api/stats", (req, res) => {
                     ).toFixed(1)
             };
 
+
         } catch (error) {
 
             disk = {
@@ -687,9 +703,9 @@ app.get("/api/stats", (req, res) => {
 });
 
 
-/* =========================================================
-   DASHBOARD
-   ========================================================= */
+// =====================================================
+// DASHBOARD
+// =====================================================
 
 app.get("/dashboard.html", (req, res) => {
 
@@ -702,9 +718,9 @@ app.get("/dashboard.html", (req, res) => {
 });
 
 
-/* =========================================================
-   START SERVER
-   ========================================================= */
+// =====================================================
+// START SERVER
+// =====================================================
 
 async function startServer() {
 
