@@ -859,7 +859,8 @@ async function confirmCheckout(orderID){
   const orderPayload = {
     customer_id: STATE.user?.id || 0,
     order_id: orderID,
-    order_details: STATE.cart,
+    // Send cart as JSON text so PostgreSQL JSONB accepts it reliably
+    order_details: JSON.stringify(STATE.cart),
     total_amount: totalAmount,
     payment_method: method
   };
