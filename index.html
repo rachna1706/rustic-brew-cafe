@@ -98,7 +98,7 @@
 <!-- Top bar (hidden on login) -->
 <header id="topbar" class="hidden">
   <!-- Inline SVG Logo -->
- <img id="logo" src="logo2.jpg" alt="The Rustic Brew" />
+ <img id="logo2" src="logo2.jpg" alt="The Rustic Brew" />
     <circle cx="100" cy="100" r="95" stroke="#5c4033" stroke-width="6" fill="#f5f0e6"/>
     <line x1="40" y1="160" x2="160" y2="40" stroke="#5c4033" stroke-width="4"/>
     <path d="M140 80 h-40 v30 a15 15 0 0 0 30 0 v-10 h10 a10 10 0 0 0 0 -20z" fill="#a0522d"/>
@@ -505,32 +505,45 @@ langSelect.onchange = () => {
   applyLoginI18N();
 };
 
-startBtn.onclick = () => {
-  // final re-check in case fields changed programmatically
+startBtn.onclick = async () => {
   validateLogin();
   if(startBtn.disabled) return;
+
   LANG = langSelect.value;
-  STATE.user = {name:nameInput.value.trim(), phone:digitsOnly(phoneInput.value), lang:LANG};
-fetch("save_customer.php", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    name: nameInput.value.trim(),
-    phone: phoneInput.value.trim(),
-    lang: langSelect.value
-  })
-})
-.then(res => res.json())
-.then(data => {
-  console.log("Customer saved:", data);
-  STATE.user = { id: data.customer_id, name: nameInput.value.trim(), phone: phoneInput.value.trim(), lang: langSelect.value };
-})
-.catch(err => console.error(err));
-  document.getElementById("topbar").classList.remove("hidden");
-  document.getElementById("screen-login").style.display="none";
-  document.getElementById("screen-main").style.display="block";
-  document.getElementById("langBadge").textContent = LANG.toUpperCase();
-  renderAll();
+  const name = nameInput.value.trim();
+  const phone = digitsOnly(phoneInput.value);
+
+  try{
+    startBtn.disabled = true;
+    startBtn.textContent = "Connecting...";
+
+    const response = await fetch("/api/customer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, phone, lang: LANG })
+    });
+
+    const data = await response.json();
+    console.log("Customer API response:", response.status, data);
+
+    if(!response.ok || !data.success){
+      throw new Error(data.message || "Customer could not be saved.");
+    }
+
+    STATE.user = { id: data.customer_id, name, phone, lang: LANG };
+
+    document.getElementById("topbar").classList.remove("hidden");
+    document.getElementById("screen-login").style.display = "none";
+    document.getElementById("screen-main").style.display = "block";
+    document.getElementById("langBadge").textContent = LANG.toUpperCase();
+    renderAll();
+
+  }catch(error){
+    console.error("Customer save failed:", error);
+    alert(`❌ Could not connect to the server.\n\n${error.message}\n\nPlease try again.`);
+    startBtn.disabled = false;
+    startBtn.textContent = t("start");
+  }
 };
 
 /* ===================== RENDER ===================== */
@@ -823,11 +836,16 @@ document.getElementById("checkoutBtn").onclick = () => {
   });
 };
 
-function confirmCheckout(orderID){
+async function confirmCheckout(orderID){
   const modal = getModalEl();
+  if(!modal){
+    alert("Checkout window could not be found. Please try again.");
+    return;
+  }
+
   const totalAmount = STATE.cart.reduce((sum,c)=>sum+c.total,0);
   const split = parseInt(modal.querySelector("#splitCount").value)||1;
-  const method = modal.querySelector('input[name="payMethod"]:checked').value;
+  const method = modal.querySelector('input[name="payMethod"]:checked')?.value || "qr";
   const upiID = modal.querySelector("#upiInput")?.value || "";
 
   let paymentMsg = "";
@@ -838,28 +856,57 @@ function confirmCheckout(orderID){
     case "waiter": paymentMsg = "A waiter will come to collect your payment at your table."; break;
   }
 
-  closeModal(modal.querySelector("button"));
-
-  alert(`✅ Thank you for ordering with us!\n\nOrder ID: ${orderID}\nTotal: ₹${totalAmount}\nSplit among: ${split} person(s)\nPayment: ${method.toUpperCase()}\n\n${paymentMsg}\n\nYour order will take approximately 15-20 minutes to prepare. Enjoy!`);
-fetch("/api/order", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
+  const orderPayload = {
     customer_id: STATE.user?.id || 0,
     order_id: orderID,
     order_details: STATE.cart,
     total_amount: totalAmount,
     payment_method: method
-  })
-})
-.then(res => res.json())
-.then(d => console.log("Order saved:", d))
-.catch(e => console.error(e));
+  };
 
-  // Clear cart after checkout
-  STATE.cart = [];
-  updateCart();
+  try{
+    console.log("Sending order to server:", orderPayload);
+
+    const response = await fetch("/api/order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orderPayload)
+    });
+
+    const data = await response.json();
+    console.log("Order API response:", response.status, data);
+
+    if(!response.ok || !data.success){
+      throw new Error(data.message || "The server could not save the order.");
+    }
+
+    closeModal(modal.querySelector("button"));
+
+    alert(`✅ Thank you for ordering with us!
+
+Order ID: ${orderID}
+Total: ₹${totalAmount}
+Split among: ${split} person(s)
+Payment: ${method.toUpperCase()}
+
+${paymentMsg}
+
+Your order has been saved successfully.
+Your order will take approximately 15-20 minutes to prepare. Enjoy!`);
+
+    STATE.cart = [];
+    updateCart();
+
+  }catch(error){
+    console.error("Order save failed:", error);
+    alert(`❌ Order could not be saved.
+
+${error.message}
+
+Please try again.`);
+  }
 }
+
 
 /* ===================== INIT ===================== */
 function ensureImages(){
@@ -873,4 +920,3 @@ window.addEventListener("load", ensureImages);
 
 </body>
 </html>
-
