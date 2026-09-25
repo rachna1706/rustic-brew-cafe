@@ -1,0 +1,13 @@
+{
+  "name": "rustic-brew-cloud",
+  "version": "1.0.0",
+  "description": "The Rustic Brew Cafe Ordering and Billing System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "pg": "^8.23.0"
+  }
+}
