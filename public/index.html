@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -874,3 +875,881 @@ window.addEventListener("load", ensureImages);
 </body>
 </html>
 
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Rustic Brew ☕︎</title>
+<style>
+  :root{
+    --brand:#5c4033;      /* deep brown */
+    --light:#f5f0e6;      /* beige background */
+    --card:#fffaf3;       /* creamy card */
+    --muted:#7a6a53;      /* muted brown-gray */
+    --accent:#c97b3d;     /* caramel accent */
+    --border:#e0d5c5;     /* warm border */
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Georgia, serif;background:var(--light);color:#3a2c1a}
+
+  /* Header */
+  header{position:sticky;top:0;z-index:10;background:var(--card);border-bottom:2px solid var(--border);
+         display:flex;align-items:center;gap:14px;padding:10px 16px}
+  #logo{height:56px}
+  header h1{font-size:20px;margin:0;color:var(--brand)}
+  #langBadge{margin-left:auto;color:var(--muted);font-size:14px}
+
+  /* Login */
+  #screen-login{
+    min-height:100vh;display:flex;align-items:center;justify-content:center;
+    background:url('https://i.pinimg.com/1200x/0a/19/ea/0a19ea5e5ffc9263e742a5d0a5343991.jpg') no-repeat center/cover;
+    padding:20px;
+  }
+  #login-card{
+    width:96%;max-width:420px;background:rgba(255,250,243,.96);
+    border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:0 8px 20px rgba(0,0,0,.25)
+  }
+  #login-card h2{margin:10px 0 6px}
+  .field{margin:8px 0}
+  .field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+  .input, select{
+    width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff
+  }
+  .btn{padding:10px 14px;border:none;border-radius:10px;background:var(--accent);color:#fff;cursor:pointer;font-weight:700}
+  .btn:disabled{opacity:.6;cursor:not-allowed}
+  .muted{color:var(--muted)}
+  .center{text-align:center}
+
+  /* Main */
+  #screen-main{display:none}
+  #navbar{
+    display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:12px;border-bottom:1px solid var(--border);background:var(--card)
+  }
+  #navbar button{border:1px solid var(--border);background:#f8f3ea;color:#3a2c1a;border-radius:999px;padding:8px 12px;cursor:pointer}
+  #navbar button:hover{background:#efe3cf}
+
+  .wrap{padding:18px}
+  .category{margin:20px 0}
+  .category h2{color:var(--brand);margin:0 0 10px;border-bottom:2px solid var(--border);padding-bottom:6px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .card img{width:100%;height:160px;object-fit:cover}
+  .card-body{padding:12px}
+  .flex{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .price{color:var(--accent);font-weight:700}
+  .add-btn{background:var(--brand);color:#fff;border:none;border-radius:8px;padding:8px 12px;cursor:pointer}
+
+  /* Cart */
+  #cartDock{
+    position:fixed;right:18px;bottom:18px;background:var(--card);border:1px solid var(--border);
+    border-radius:14px;width:320px;max-height:70vh;overflow:auto;box-shadow:0 6px 18px rgba(0,0,0,.18);display:none
+  }
+  #cartDock header{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--border)}
+  #cartList{list-style:none;margin:0;padding:0}
+  #cartList li{padding:10px 12px;border-bottom:1px dashed var(--border);font-size:14px}
+  #cartList .meta{color:var(--muted);font-size:12px;margin-top:4px}
+  #cartTotalRow{padding:12px;display:flex;justify-content:space-between;align-items:center}
+
+  /* Modal */
+  .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:50}
+  .modal{background:#fff;border:1px solid var(--border);border-radius:16px;width:96%;max-width:560px;max-height:86vh;overflow:auto}
+  .m-head{display:flex;gap:12px;align-items:center;padding:12px;border-bottom:1px solid var(--border)}
+  .thumb{width:84px;height:84px;object-fit:cover;border-radius:12px;border:1px solid var(--border)}
+  .m-body{padding:12px}
+  .group{border:1px dashed var(--border);border-radius:12px;padding:10px;margin:10px 0}
+  .row{display:flex;justify-content:space-between;align-items:center;margin:8px 0}
+  .row label{display:flex;align-items:center;gap:8px}
+  .pill{display:inline-block;margin:6px 6px 0 0;padding:6px 10px;border:1px solid var(--border);border-radius:999px}
+  .qty{display:flex;align-items:center;gap:8px}
+  .qty button{width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:#fff;cursor:pointer}
+  .m-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px;border-top:1px solid var(--border)}
+  .notes{width:100%;min-height:56px;border:1px solid var(--border);border-radius:10px;padding:8px}
+
+  /* Helpers */
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<!-- Top bar (hidden on login) -->
+<header id="topbar" class="hidden">
+  <!-- Inline SVG Logo -->
+ <img id="logo" src="logo2.jpg" alt="The Rustic Brew" />
+    <circle cx="100" cy="100" r="95" stroke="#5c4033" stroke-width="6" fill="#f5f0e6"/>
+    <line x1="40" y1="160" x2="160" y2="40" stroke="#5c4033" stroke-width="4"/>
+    <path d="M140 80 h-40 v30 a15 15 0 0 0 30 0 v-10 h10 a10 10 0 0 0 0 -20z" fill="#a0522d"/>
+    <rect x="60" y="90" width="20" height="30" fill="#5c4033"/>
+    <rect x="55" y="85" width="30" height="10" fill="#5c4033"/>
+    <line x1="70" y1="85" x2="70" y2="70" stroke="#5c4033" stroke-width="3"/>
+    <circle cx="70" cy="68" r="5" fill="#5c4033"/>
+    <text x="100" y="185" font-family="Georgia, serif" font-size="16" fill="#5c4033" text-anchor="middle">The Rustic Brew</text>
+  </svg>
+  <h1 id="title">The Rustic Brew</h1>
+  <span id="langBadge">EN</span>
+</header>
+
+<!-- LOGIN SCREEN -->
+<section id="screen-login">
+  <div id="login-card">
+    <div class="center">
+      <!-- same logo smaller -->
+      <img style="height:70px" src="logo2.jpg" viewBox="0 0 200 200" aria-hidden="true">
+        <circle cx="100" cy="100" r="95" stroke="#5c4033" stroke-width="6" fill="#f5f0e6"/>
+        <line x1="40" y1="160" x2="160" y2="40" stroke="#5c4033" stroke-width="4"/>
+        <path d="M140 80 h-40 v30 a15 15 0 0 0 30 0 v-10 h10 a10 10 0 0 0 0 -20z" fill="#a0522d"/>
+        <rect x="60" y="90" width="20" height="30" fill="#5c4033"/>
+        <rect x="55" y="85" width="30" height="10" fill="#5c4033"/>
+        <line x1="70" y1="85" x2="70" y2="70" stroke="#5c4033" stroke-width="3"/>
+        <circle cx="70" cy="68" r="5" fill="#5c4033"/>
+      </svg>
+    </div>
+    <h2 id="loginWelcome">Welcome to The Rustic Brew ☕︎</h2>
+    <p class="muted" id="loginSub">Sign in to customize & order your favorites.</p>
+
+    <div class="field">
+      <label id="labelName">Name</label>
+      <input class="input" id="nameInput" placeholder="Your name" />
+    </div>
+    <div class="field">
+      <label id="labelPhone">Phone</label>
+      <input class="input" id="phoneInput" placeholder="10-digit phone" />
+    </div>
+    <div class="field">
+      <label id="labelLang">Language</label>
+      <select id="langSelect" class="input">
+        <option value="en">English</option>
+        <option value="hi">हिंदी</option>
+        <option value="mr">मराठी</option>
+      </select>
+    </div>
+    <div class="field">
+      <button id="startBtn" class="btn" disabled>Start Ordering</button>
+    </div>
+    <p class="muted center" id="disclaimer">We value your privacy. Your data stays on this device.</p>
+  </div>
+</section>
+
+<!-- MAIN SCREEN -->
+<section id="screen-main">
+  <nav id="navbar"></nav>
+  <div class="wrap" id="menuWrap"></div>
+</section>
+
+<!-- CART DOCK -->
+<aside id="cartDock">
+  <header class="flex" style="gap:8px;padding:10px 12px">
+    <strong id="cartTitle">Your Cart</strong>
+    <button class="btn" style="margin-left:auto" id="checkoutBtn">Checkout</button>
+  </header>
+  <ul id="cartList"></ul>
+  <div id="cartTotalRow">
+    <span id="cartTotalLabel"><b>Total</b></span>
+    <span class="price">₹<span id="cartTotal">0</span></span>
+  </div>
+</aside>
+
+<script>
+/* ===================== I18N ===================== */
+const I18N = {
+  en: {
+    siteTitle: "The Rustic Brew",
+    loginWelcome: "Welcome to The Rustic Brew ☕︎",
+    loginSub: "Sign in to customize & order your favorites.",
+    name: "Name",
+    phone: "Phone",
+    language: "Language",
+    start: "Start Ordering",
+    privacy: "We value your privacy. Your data stays on this device.",
+    nav: { burgers:"Burgers", pasta:"Pasta", spaghetti:"Spaghetti", sandwich:"Sandwiches", pizza:"Pizza", fries:"Fries", beverages:"Beverages", desserts:"Desserts" },
+    cart: { title:"Your Cart", total:"Total", checkout:"Checkout", empty:"Your cart is empty." },
+    menuBtn:"Customize & Add",
+    modal:{ size:"Choose Size", addons:"Add-ons", choices:"Options", qty:"Quantity", notes:"Special Instructions", cancel:"Cancel", add:"Add to Cart", total:"Total" }
+  },
+  hi: {
+    siteTitle: "द रस्टिक ब्रू ☕︎",
+    loginWelcome: "द रस्टिक ब्रू ☕︎ में आपका स्वागत है ",
+    loginSub: "अपना ऑर्डर कस्टमाइज़ करने और देने के लिए लॉगिन करें।",
+    name: "नाम",
+    phone: "फ़ोन",
+    language: "भाषा",
+    start: "ऑर्डर शुरू करें",
+    privacy: "हम आपकी गोपनीयता का सम्मान करते हैं। आपका डेटा इसी डिवाइस पर रहता है।",
+    nav: { burgers:"बर्गर", pasta:"पास्ता", spaghetti:"स्पघेटी", sandwich:"सैंडविच", pizza:"पिज़्ज़ा", fries:"फ्राइज", beverages:"पेय", desserts:"डेज़र्ट" },
+    cart: { title:"आपकी टोकरी", total:"कुल", checkout:"चेकआउट", empty:"टोकरी खाली है।" },
+    menuBtn:"कस्टमाइज़ करें और जोड़ें",
+    modal:{ size:"साइज़ चुनें", addons:"एड-ऑन", choices:"विकल्प", qty:"मात्रा", notes:"विशेष निर्देश", cancel:"रद्द करें", add:"कार्ट में जोड़ें", total:"कुल" }
+  },
+  mr: {
+    siteTitle: "द रस्टिक ब्रू ☕︎",
+    loginWelcome: "द रस्टिक ब्रू ☕︎ मध्ये आपले स्वागत ",
+    loginSub: "ऑर्डर कस्टमाइझ करून देण्यासाठी लॉगिन करा.",
+    name: "नाव",
+    phone: "फोन",
+    language: "भाषा",
+    start: "ऑर्डर सुरू करा",
+    privacy: "आम्ही तुमच्या गोपनीयतेचा सन्मान करतो. तुमची माहिती या डिव्हाइसवरच राहते.",
+    nav: { burgers:"बर्गर", pasta:"पास्ता", spaghetti:"स्पघेटी", sandwich:"सँडविच", pizza:"पिझ्झा", fries:"फ्राइज", beverages:"पेय", desserts:"डेजर्ट" },
+    cart: { title:"तुमची कार्ट", total:"एकूण", checkout:"चेकआउट", empty:"कार्ट रिकामी आहे." },
+    menuBtn:"कस्टमाइझ करा व जोडा",
+    modal:{ size:"आकार निवडा", addons:"ऍड-ऑन्स", choices:"पर्याय", qty:"प्रमाण", notes:"विशेष सूचना", cancel:"रद्द", add:"कार्टमध्ये जोडा", total:"एकूण" }
+  }
+};
+
+let LANG = "en";
+function t(path){
+  const parts = path.split(".");
+  let cur = I18N[LANG];
+  for(const p of parts){ cur = cur?.[p]; }
+  return cur ?? path;
+}
+
+/* ===================== MENU ===================== */
+/* Prices are placeholders; adjust as needed. */
+const MENU = [
+  {
+    key:"burgers", title:{en:"Burgers"},
+    items:[
+      { id:"garden-fresh", name:{en:"Garden Fresh Delight"}, price:180,
+        img:"https://www.noracooks.com/wp-content/uploads/2023/04/veggie-burgers-6.jpg", 
+        choices:[{label:"Flavor", items:["Cheesy","Spicy Volcano","BBQ Sizzler"]}]
+      },
+      { id:"royal-paneer", name:{en:"Royal Paneer Supreme"}, price:200,
+        img:"https://sinfullyspicy.com/wp-content/uploads/2025/05/1200-by-1200-images-3.jpg", 
+        choices:[{label:"Flavor", items:["Cheesy","Spicy Volcano","BBQ Sizzler"]}]
+      },
+      { id:"mushroom-melt", name:{en:"Mushroom Melt Burger"}, price:190,
+        img:"https://www.jarlsberg.com/recipes/the-nutty-mushroom-melt-burger/_/image/071b65a8-f59b-45bb-9f89-4abce0b09c75:332dbc043c2e03c4e7d9fa428d1eea94dd108f7d/square-800/JARLSBERGBURGERS_201801096213_HIGHRES_v2_RGB.jpg", 
+        choices:[{label:"Flavor", items:["Cheesy","Spicy Volcano","BBQ Sizzler"]}]
+      },
+      { id:"crispy-veg", name:{en:"Crispy Veg Crunch"}, price:170,
+        img:"https://stroudtimes.com/wp-content/uploads/2023/09/Veggie-Burger-2.jpg", 
+        choices:[{label:"Flavor", items:["Cheesy","Spicy Volcano","BBQ Sizzler"]}]
+      },
+      { id:"soylicious", name:{en:"Soylicious Bite Burger"}, price:175,
+        img:"https://media.istockphoto.com/id/180698497/photo/the-quinoa-burger.jpg?s=612x612&w=0&k=20&c=4cpZGxoNgxPf2EChtAtUIpjYcidpyiSYrAg1avN_jZA=", 
+        choices:[{label:"Flavor", items:["Cheesy","Spicy Volcano","BBQ Sizzler"]}]
+      },
+      { id:"classic-chicken", name:{en:"Classic Chicken Crunch"}, price:220,
+        img:"https://5.imimg.com/data5/TP/AI/GLADMIN-51695823/big-crunch-chicken-cheese-burger-500x500.png", 
+        choices:[{label:"Flavor", items:["Cheesy","Spicy Volcano","BBQ Sizzler"]}]
+      },
+      { id:"smoky-bbq", name:{en:"Smoky BBQ Chicken Burger"}, price:230,
+        img:"https://amindfullmom.com/wp-content/uploads/2024/05/Chicken-Burger-Recipe.jpg", 
+        choices:[{label:"Flavor", items:["Cheesy","Spicy Volcano","BBQ Sizzler"]}]
+      },
+      { id:"double-decker", name:{en:"Double Decker Burger"}, price:260,
+        img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=80", 
+        choices:[{label:"Flavor", items:["Cheesy","Spicy Volcano","BBQ Sizzler"]}]
+      },
+      { id:"fiery-tandoori", name:{en:"Fiery Tandoori Chicken"}, price:240,
+        img:"https://img.thecdn.in/403544/SKU-0872_0-1734486638518.jpg?width=600&format=webp", 
+        choices:[{label:"Flavor", items:["Cheesy","Spicy Volcano","BBQ Sizzler"]}]
+      },
+      { id:"cheesy-overload", name:{en:"Cheesy Overload Chicken Burger"}, price:250,
+        img:"https://thumbs.dreamstime.com/b/juicy-double-chicken-burger-melted-cheese-gourmet-bun-delicious-tempting-overflows-nestled-toasted-savory-rich-363861236.jpg"
+      },
+      { id:"mexican-salsa", name:{en:"Mexican Salsa Burger"}, price:210,
+        img:"https://www.thecookierookie.com/wp-content/uploads/2023/09/mexican-burger-recipe-3-500x500.jpg",
+        choices:[{label:"Type", items:["Paneer","Veggie","Chicken"]}]
+      },
+      { id:"arabic-shawarma", name:{en:"Arabic Shawarma Burger"}, price:220,
+        img:"https://b.zmtcdn.com/data/pictures/chains/3/21836373/b2038b491d5af77fc38cefcecd5e47a0.jpg?fit=around|960:500&crop=960:500;*,*",
+        choices:[{label:"Type", items:["Paneer","Veggie","Chicken"]}]
+      }
+    ]
+  },
+  {
+    key:"pasta", title:{en:"Pasta"},
+    items:[
+      { id:"cheese-volcano", name:{en:"Cheese Volcano Pasta"}, price:200,
+        img:"https://tblg.k-img.com/restaurant/images/Rvw/215505/200x200_square_349c752cbb87ecb71496049d288ee194.jpg",
+        choices:[{label:"Type", items:["Veg","Chicken","Prawn"]}]
+      },
+      { id:"spicy-tango", name:{en:"Spicy Tango Pasta"}, price:210,
+        img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGj5fp8DwKOgB02Y1w-suEvsEg_E0eYYdO_A&s",
+        choices:[{label:"Type", items:["Veg","Chicken","Prawn"]}]
+      },
+      { id:"peri-peri", name:{en:"Peri-Peri Punch Pasta"}, price:220,
+        img:"https://weikfield.com/wp-content/uploads/2025/01/Perry-Perry-Pasta.jpeg",
+        choices:[{label:"Type", items:["Veg","Chicken","Prawn"]}]
+      },
+      { id:"italian-rasoi", name:{en:"Italian Rasoi Special"}, price:230,
+        img:"https://vismaifood.com/storage/app/uploads/public/7b2/49e/d12/thumb__700_0_0_0_auto.jpg",
+        choices:[{label:"Type", items:["Veg","Chicken","Prawn"]}]
+      },
+      { id:"tandoori-fusion", name:{en:"Tandoori Fusion Pasta"}, price:240,
+        img:"https://www.myplantifulcooking.com/wp-content/uploads/2022/03/tandoori-pasta-featured.jpg",
+        choices:[{label:"Type", items:["Veg","Chicken","Prawn"]}]
+      }
+    ]
+  },
+  {
+    key:"spaghetti", title:{en:"Spaghetti"},
+    items:[
+      { id:"makhni", name:{en:"Spaghetti-e-Makhni"}, price:220,
+        img:"https://www.chefkunalkapur.com/wp-content/uploads/2021/06/Makhni-Pasta-scaled-e1623509487113.jpg?v=1623509474",
+        choices:[{label:"Type", items:["Veg","Chicken","Meatballs","Prawns"]}]
+      },
+      { id:"chatpata", name:{en:"Chatpata Tandoori Spaghetti"}, price:230,
+        img:"https://i.ytimg.com/vi/VKizSq2_ZNs/hq720.jpg?sqp=oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLC-c6oLZ6vni9-LvcFr2r9eGs_BKg",
+        choices:[{label:"Type", items:["Veg","Chicken","Meatballs","Prawns"]}]
+      },
+      { id:"desi-grill", name:{en:"Desi Grill Spaghetti"}, price:220,
+        img:"https://dinnerthendessert.com/wp-content/uploads/2024/07/Creamy-Steak-Pasta-24-e1726768328217-320x320.jpg",
+        choices:[{label:"Type", items:["Veg","Chicken","Prawn"]}]
+      },
+      { id:"aglio-olio", name:{en:"Spaghetti Aglio e Olio"}, price:210,
+        img:"https://images.services.kitchenstories.io/UY89c4f471NaK1C-BQ07FGZ_qVA=/3840x0/filters:quality(80)/images.kitchenstories.io/wagtailOriginalImages/R131-final-photo-3-sg.jpg",
+        choices:[{label:"Type", items:["Veg","Chicken"]}]
+      },
+      { id:"carbonara", name:{en:"Spaghetti Carbonara"}, price:240,
+        img:"https://www.allrecipes.com/thmb/Vg2cRidr2zcYhWGvPD8M18xM_WY=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/11973-spaghetti-carbonara-ii-DDMFS-4x3-6edea51e421e4457ac0c3269f3be5157.jpg",
+        choices:[{label:"Type", items:["Veg","Chicken","Eggs","Seafood"]}]
+      }
+    ]
+  },
+  {
+    key:"sandwich", title:{en:"Sandwiches"},
+    items:[
+      { id:"chatpata-toastie", name:{en:"Chatpata Masala Toastie"}, price:120,
+        img:"https://vanitascorner.com/wp-content/uploads/2023/04/Bombay-Sandwich-VC.jpg",
+        choices:[{label:"Cheese", items:["Cheese","Without Cheese"]}]
+      },
+      { id:"bombay-tandoori", name:{en:"Bombay Tandoori Toastie"}, price:130,
+        img:"https://i.pinimg.com/736x/7b/ea/06/7bea068aade92477e339ee3bdae706b3.jpg",
+        choices:[{label:"Cheese", items:["Cheese","Without Cheese"]}]
+      },
+      { id:"mushroom-magic", name:{en:"Mushroom Magic Sandwich"}, price:140,
+        img:"https://vaya.in/recipes/wp-content/uploads/2019/02/Tandoori-Mushroom-Sandwich.jpg",
+        choices:[{label:"Cheese", items:["Cheese","Without Cheese"]}]
+      },
+      { id:"tandoori-tikka", name:{en:"Tandoori Tikka Sandwich"}, price:150,
+        img:"https://st4.depositphotos.com/19960896/23282/i/1600/depositphotos_232822388-stock-photo-paneer-tikka-sandwich-popular-indian.jpg",
+        choices:[{label:"Cheese", items:["Cheese","Without Cheese"]}]
+      },
+      { id:"garden-crunch", name:{en:"Garden Fresh Crunch"}, price:140,
+        img:"file:///C:/Users/Rachna/Downloads/garden_fresh_hummus_sandwich_and_apple_wedges_a763d299-657a-4f8c-975b-e339a183305e%20(2).jpeg",
+        choices:[{label:"Cheese", items:["Cheese","Without Cheese"]}]
+      },
+      { id:"cheesy-chilli", name:{en:"Cheesyy Chilli Toast"}, price:150,
+        img:"https://coox-new.s3.ap-south-1.amazonaws.com/images/d/dishes/Chilli%20Cheese%20Toast-undefined-dish-img.jpeg?v=1627296571747",
+        addons:[{n:"Extra Cheese",p:30}]
+      }
+    ]
+  },
+  {
+    key:"pizza", title:{en:"Pizza"},
+    items:[
+      { id:"cheesy-volcano", name:{en:"Cheesyy Volcano Pizza"}, price:280,
+        img:"https://soranews24.com/wp-content/uploads/sites/3/2024/11/Dominos-Pizza-Japan-cheese-volcano-English-menu-limited-edition-food-news-10.jpg",
+        addons:[{n:"Extra Cheese",p:40}],
+        choices:[{label:"Toppings", items:["Vegetables","Chicken","Paneer","Pepperoni","Sausage"]}]
+      },
+      { id:"overload-fiesta", name:{en:"Overload Fiesta"}, price:300,
+        img:"https://images.raasakarts.com/insecure/fit/1000/1000/ce/0/plain/https://rasakart-assets.s3.ap-south-1.amazonaws.com/3fa229/prods/IQrPgKlK64N9YCmaC8L1mO2Rd2ZwhjJwdZyaUJBz.jpg@webp",
+        choices:[{label:"Toppings", items:["Vegetables","Chicken","Paneer","Pepperoni","Sausage"]}]
+      },
+      { id:"corn-carnival", name:{en:"Corn Carnival Pizza"}, price:270,
+        img:"https://cdn.dotpe.in/longtail/store-items/7702259/zmb2tBOb.webp",
+        choices:[{label:"Toppings", items:["Vegetables","Chicken","Paneer","Pepperoni","Sausage"]}]
+      },
+      { id:"desi-grill-supreme", name:{en:"Desi Grill Supreme"}, price:290,
+        img:"https://cdn.dotpe.in/longtail/store-items/5523029/p8ehljq6.jpeg",
+        choices:[{label:"Toppings", items:["Vegetables","Chicken","Paneer","Pepperoni","Sausage"]}]
+      }
+    ]
+  },
+  {
+    key:"fries", title:{en:"Fries"},
+    items:[
+      { id:"masala-masti", name:{en:"Masala Masti Fries"}, price:120,
+        img:"https://mymorningmocha.com/wp-content/uploads/2024/03/masala-chips-recipe.jpg"},
+      { id:"tandoori-tadka", name:{en:"Tandoori Tadka Fries"}, price:130,
+        img:"https://media-cdn.tripadvisor.com/media/photo-s/14/02/80/fb/a-scrumptious-blend-of.jpg"},
+      { id:"plain-fries", name:{en:"Plain Fries"}, price:100,
+        img:"https://www.savoryexperiments.com/wp-content/uploads/2024/02/Cajun-Fries-19.jpg"},
+      { id:"cheese-overload", name:{en:"Cheese Overload Fries"}, price:150,
+        img:"https://www.acouplecooks.com/wp-content/uploads/2022/06/Cheese-Fries-005.jpg"},
+      { id:"chatpata", name:{en:"Chatpata Chatkara Fries"}, price:140,
+        img:"https://bakersway.in/cdn/shop/files/03242aef600182b71d0032eec97001bb.jpg?v=1717066501"}
+    ]
+  },
+  {
+    key:"beverages", title:{en:"Beverages"},
+    items:[
+      { id:"mocha-madness", name:{en:"Mocha Madness"}, price:160,
+        img:"https://images.immediate.co.uk/production/volatile/sites/2/2021/11/Mocha-1fc71f7.png?resize=1200%2C630",
+        size:[{n:"Small",d:0},{n:"Medium",d:20},{n:"Large",d:40}],
+        choices:[{label:"Milk", items:["Regular Milk","Oat Milk","Almond Milk","Soy Milk"]}]
+      },
+      { id:"vanilla-latte", name:{en:"Velvetty Vanilla Latte"}, price:150,
+        img:"https://cdn.zeptonow.com/production/tr:w-640,ar-4348-4348,pr-true,f-auto,q-80/cms/product_variant/03dec151-460d-485e-ade8-bc2ea74c42a8.jpeg",
+        size:[{n:"Small",d:0},{n:"Medium",d:20},{n:"Large",d:40}],
+        choices:[{label:"Milk", items:["Regular Milk","Oat Milk","Almond Milk","Soy Milk"]}]
+      },
+      { id:"caramel-kiss", name:{en:"Caramel Kiss Cappuccino"}, price:170,
+        img:"https://www.sessioncoffeedenver.com/wp-content/uploads/2025/03/Salted-Caramel-Cappuccino-1-480x270.jpg",
+        size:[{n:"Small",d:0},{n:"Medium",d:20},{n:"Large",d:40}],
+        choices:[{label:"Milk", items:["Regular Milk","Oat Milk","Almond Milk","Soy Milk"]}]
+      },
+      { id:"choco-lava", name:{en:"Hottie Choco Lava"}, price:180,
+        img:"https://www.sunglowkitchen.com/wp-content/uploads/2021/11/hot-chocolate-with-oat-milk-7.jpg",
+        size:[{n:"Small",d:0},{n:"Medium",d:20},{n:"Large",d:40}],
+        choices:[{label:"Milk", items:["Regular Milk","Oat Milk","Almond Milk","Soy Milk"]}]
+      },
+      { id:"masala-tea", name:{en:"Magic Masala Tea"}, price:90,
+        img:"https://www.thespicehouse.com/cdn/shop/articles/Chai_Masala_Tea_1200x1200.jpg?v=1606936195",
+        size:[{n:"Kulhad",d:0},{n:"Large Cup",d:15}],
+        choices:[{label:"Flavor", items:["Classic Spiced","Ginger","Elaichi"]}]
+      },
+      { id:"herbal-harmony", name:{en:"Herbal Harmony"}, price:100,
+        img:"https://www.nirvanaorganic.in/cdn/shop/articles/4x6_-13_520x500_152f3cc6-eec3-4d80-918e-ab5ab2ca04b8.png?v=1734526548&width=520",
+        choices:[{label:"Type", items:["Chamomile","Green Tea","Lavender Calm","Hibiscus Harmony"]}]
+      },
+      { id:"cafe-classic", name:{en:"Cafe Classic"}, price:120,
+        img:"https://t3.ftcdn.net/jpg/15/17/16/74/360_F_1517167498_Z159RhGPqW9u9REqNEgHk3hGrNpNyleO.jpg",
+        size:[{n:"Small",d:0},{n:"Large",d:20}],
+        choices:[{label:"Milk", items:["Regular Milk","Oat Milk","Almond Milk","Soy Milk"]}]
+      },
+      { id:"americano", name:{en:"Americano"}, price:110,
+        img:"https://emilylaurae.com/wp-content/uploads/2022/09/iced-americano-6.jpg",
+        size:[{n:"Small",d:0},{n:"Large",d:20}],
+        choices:[{label:"Ice", items:["Hot","Iced"]}]
+      }
+    ]
+  },
+  {
+    key:"desserts", title:{en:"Desserts"},
+    items:[
+      { id:"lava-bomb", name:{en:"Hazel-Choco Lava Bomb"}, price:120,
+        img:"https://i.pinimg.com/1200x/d5/f0/42/d5f042b7f17614643eae01933f25ede1.jpg"},
+      { id:"lemon-mousse", name:{en:"Lavender Lemon Mousse"}, price:140,
+        img:"https://cdn.apartmenttherapy.info/image/upload/f_jpg,q_auto:eco,c_fill,g_auto,w_1500,ar_4:3/k%2FPhoto%2FRecipes%2F2024-04-WC-blueberry-mousse%2FWC-blueberry-mousse-228"},
+      { id:"apple-pie", name:{en:"Cinnamon Apple Pie Cups"}, price:150,
+        img:"https://i.pinimg.com/1200x/41/4e/0a/414e0a8b84281b4ff486fd1d9c22bf6a.jpg"},
+      { id:"strawberry-cheesecake", name:{en:"Strawberry Cheesecake Pops"}, price:160,
+        img:"https://princesspinkygirl.com/wp-content/uploads/2022/03/Strawberry-Cheesecake-Bites-39sq1200.jpg"},
+      { id:"matcha-truffle", name:{en:"Matcha Magic Truffle"}, price:170,
+        img:"https://i.pinimg.com/736x/19/e0/23/19e023c3f88fd156bce97ec4430dda73.jpg"},
+      { id:"honey-tart", name:{en:"Golden Honey Almond Tart"}, price:180,
+        img:"https://i.pinimg.com/1200x/e9/13/91/e91391ae1e35b4bd9fe1e5597b88d447.jpg"},
+      { id:"cocoberry", name:{en:"Cocoberry Fantasy"}, price:190,
+        img:"https://i.pinimg.com/1200x/4c/31/7b/4c317bfbd8e8667e140ddabcd241daf5.jpg"},
+      { id:"carrot-cake", name:{en:"Nutty Carrot Cake Bliss"}, price:200,
+        img:"https://i.pinimg.com/1200x/f3/30/b0/f330b057f675a4e499d6ee1288d2709d.jpg"},
+      { id:"herbal-tower", name:{en:"Choco Herbal Bliss Tower"}, price:210,
+        img:"https://i.pinimg.com/1200x/c3/2f/18/c32f180c331d55076b58eae893c46487.jpg"}
+    ]
+  }
+];
+
+/* ===================== STATE ===================== */
+let STATE = { user:null, cart:[] };
+
+/* ===================== LOGIN ===================== */
+const nameInput = document.getElementById("nameInput");
+const phoneInput = document.getElementById("phoneInput");
+const langSelect = document.getElementById("langSelect");
+const startBtn   = document.getElementById("startBtn");
+
+function applyLoginI18N(){
+  document.getElementById("title").textContent = t("siteTitle");
+  document.getElementById("loginWelcome").textContent = t("loginWelcome");
+  document.getElementById("loginSub").textContent     = t("loginSub");
+  document.getElementById("labelName").textContent    = t("name");
+  document.getElementById("labelPhone").textContent   = t("phone");
+  document.getElementById("labelLang").textContent    = t("language");
+  startBtn.textContent                                = t("start");
+  document.getElementById("disclaimer").textContent   = t("privacy");
+}
+applyLoginI18N();
+
+function digitsOnly(s){ return (s||"").replace(/\D/g,""); }
+function validateLogin(){
+  const okName  = nameInput.value.trim().length >= 2;
+  const phoneDigits = digitsOnly(phoneInput.value);
+  const okPhone = phoneDigits.length === 10;  // exactly 10 digits, ignoring spaces/dashes
+  startBtn.disabled = !(okName && okPhone);
+}
+
+nameInput.addEventListener("input", validateLogin);
+phoneInput.addEventListener("input", validateLogin);
+
+langSelect.onchange = () => {
+  LANG = langSelect.value;
+  document.getElementById("langBadge").textContent = LANG.toUpperCase();
+  applyLoginI18N();
+};
+
+startBtn.onclick = () => {
+  // final re-check in case fields changed programmatically
+  validateLogin();
+  if(startBtn.disabled) return;
+  LANG = langSelect.value;
+  STATE.user = {name:nameInput.value.trim(), phone:digitsOnly(phoneInput.value), lang:LANG};
+fetch("save_customer.php", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    name: nameInput.value.trim(),
+    phone: phoneInput.value.trim(),
+    lang: langSelect.value
+  })
+})
+.then(res => res.json())
+.then(data => {
+  console.log("Customer saved:", data);
+  STATE.user = { id: data.customer_id, name: nameInput.value.trim(), phone: phoneInput.value.trim(), lang: langSelect.value };
+})
+.catch(err => console.error(err));
+  document.getElementById("topbar").classList.remove("hidden");
+  document.getElementById("screen-login").style.display="none";
+  document.getElementById("screen-main").style.display="block";
+  document.getElementById("langBadge").textContent = LANG.toUpperCase();
+  renderAll();
+};
+
+/* ===================== RENDER ===================== */
+function renderAll(){
+  // Navbar categories
+  const nav = document.getElementById("navbar");
+  nav.innerHTML = MENU.map(cat => 
+    `<button onclick="scrollToCat('${cat.key}')">${cat.title[LANG] || cat.title.en}</button>`
+  ).join("");
+
+  // Title (topbar)
+  document.getElementById("title").textContent = t("siteTitle");
+
+  // Menu sections
+  const wrap = document.getElementById("menuWrap");
+  wrap.innerHTML = MENU.map(cat => `
+    <section class="category" id="${cat.key}">
+      <h2>${cat.title[LANG] || cat.title.en}</h2>
+      <div class="grid">
+        ${cat.items.map(item => `
+          <article class="card">
+            <img src="${item.img}" alt="${item.name[LANG] || item.name.en}">
+            <div class="card-body">
+              <div class="flex">
+                <h3 style="margin:0">${item.name[LANG] || item.name.en}</h3>
+                <span class="price">₹${item.price}</span>
+              </div>
+              <button class="add-btn" onclick="openCustomize('${cat.key}','${item.id}')">${t("menuBtn")}</button>
+            </div>
+          </article>
+        `).join("")}
+      </div>
+    </section>
+  `).join("");
+
+  // Cart labels
+  document.getElementById("cartTitle").textContent = t("cart.title");
+  document.getElementById("checkoutBtn").textContent = t("cart.checkout");
+  document.getElementById("cartTotalLabel").innerHTML = `<b>${t("cart.total")}</b>`;
+  updateCart();
+}
+
+function scrollToCat(id){ document.getElementById(id).scrollIntoView({behavior:"smooth"}); }
+
+/* ===================== CUSTOMIZE MODAL ===================== */
+let CURRENT = null; // {cat, item}
+
+function openCustomize(catKey, itemId){
+  const cat = MENU.find(c=>c.key===catKey);
+  const item = cat.items.find(i=>i.id===itemId);
+  CURRENT = {cat, item};
+
+  const size = item.size||[];
+  const addons = item.addons||[];
+  const choices = item.choices||[];
+
+  const backdrop = document.createElement("div");
+  backdrop.className = "backdrop";
+  backdrop.innerHTML = `
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="m-head">
+        <img class="thumb" src="${item.img}" alt="${item.name[LANG] || item.name.en}">
+        <div>
+          <h3 style="margin:0">${item.name[LANG] || item.name.en}</h3>
+          <div class="muted">${t("modal.total")}: ₹<span id="calcTotal">${item.price}</span></div>
+        </div>
+        <button class="btn" style="margin-left:auto;background:#fff;color:#3a2c1a;border:1px solid var(--border)" onclick="closeModal(this)">✕</button>
+      </div>
+      <div class="m-body">
+        ${size.length?`
+          <div class="group">
+            <b>${t("modal.size")}</b>
+            ${size.map((s,idx)=>`
+              <div class="row">
+                <label><input type="radio" name="size" value="${s.d}" ${idx===0?"checked":""}> ${s.n}</label>
+                <span class="muted">${s.d>0?`+₹${s.d}`:"Included"}</span>
+              </div>
+            `).join("")}
+          </div>`:""}
+        ${addons.length?`
+          <div class="group">
+            <b>${t("modal.addons")}</b>
+            <div>
+              ${addons.map(a=>`
+                <label class="pill">
+                  <input type="checkbox" name="addon" value="${a.n}" data-price="${a.p}"> ${a.n} (+₹${a.p})
+                </label>
+              `).join("")}
+            </div>
+          </div>`:""}
+        ${choices.length?`
+          <div class="group">
+            <b>${t("modal.choices")}</b>
+            ${choices.map((c,ci)=>`
+              <div class="row" style="align-items:center">
+                <label style="min-width:120px">${c.label}</label>
+                <select data-idx="${ci}">
+                  ${c.items.map(opt=>`<option>${opt}</option>`).join("")}
+                </select>
+              </div>
+            `).join("")}
+          </div>`:""}
+        <div class="group">
+          <b>${t("modal.qty")}</b>
+          <div class="qty">
+            <button onclick="chgQty(-1)">-</button>
+            <span id="qtyVal">1</span>
+            <button onclick="chgQty(1)">+</button>
+          </div>
+        </div>
+        <div class="group">
+          <b>${t("modal.notes")}</b>
+          <textarea class="notes" id="notesBox" placeholder="e.g., less sugar, extra hot"></textarea>
+        </div>
+      </div>
+      <div class="m-foot">
+        <button class="btn" style="background:#fff;color:#3a2c1a;border:1px solid var(--border)" onclick="closeModal(this)">${t("modal.cancel")}</button>
+        <button class="btn" onclick="confirmAdd()">${t("modal.add")}</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(backdrop);
+  backdrop.addEventListener("change", recomputePrice);
+  recomputePrice();
+}
+
+function closeModal(btn){
+  const back = btn.closest(".backdrop") || document.querySelector(".backdrop");
+  if(back) back.remove();
+  CURRENT = null;
+}
+
+function getModalEl(){ return document.querySelector(".backdrop"); }
+
+function chgQty(delta){
+  const el = getModalEl().querySelector("#qtyVal");
+  let v = parseInt(el.textContent,10);
+  v = Math.max(1, v + delta);
+  el.textContent = v;
+  recomputePrice();
+}
+
+function recomputePrice(){
+  if(!CURRENT) return;
+  const {item} = CURRENT;
+  const modal = getModalEl();
+  let total = item.price;
+
+  // size
+  const s = modal.querySelector('input[name="size"]:checked');
+  if(s) total += parseInt(s.value,10);
+
+  // addons
+  modal.querySelectorAll('input[name="addon"]:checked').forEach(cb=>{
+    total += parseInt(cb.dataset.price,10);
+  });
+
+  // choices with priceMap
+  (item.choices||[]).forEach((c,idx)=>{
+    const sel = modal.querySelector(`select[data-idx="${idx}"]`);
+    if(!sel) return;
+    const val = sel.value;
+    const map = c.priceMap||{};
+    if(map[val]) total += map[val];
+  });
+
+  // qty
+  const qty = parseInt(modal.querySelector("#qtyVal").textContent,10);
+  total = total * qty;
+
+  modal.querySelector("#calcTotal").textContent = total;
+}
+
+function confirmAdd(){
+  const modal = getModalEl();
+  const {item} = CURRENT;
+
+  const size = modal.querySelector('input[name="size"]:checked')?.nextSibling?.textContent?.trim() || "";
+  const addons = [...modal.querySelectorAll('input[name="addon"]:checked')].map(cb=>cb.value);
+  const choose = (item.choices||[]).map((c,idx)=>{
+    const val = modal.querySelector(`select[data-idx="${idx}"]`)?.value || "";
+    return {label:c.label, value:val};
+  });
+  const qty = parseInt(modal.querySelector("#qtyVal").textContent,10);
+  const notes = modal.querySelector("#notesBox").value.trim();
+  const total = parseInt(modal.querySelector("#calcTotal").textContent,10);
+
+  STATE.cart.push({ id:item.id, name:item.name[LANG] || item.name.en, size, addons, choose, qty, notes, total });
+  closeModal(modal.querySelector("button"));
+  updateCart(true);
+}
+
+/* ===================== CART ===================== */
+function updateCart(open){
+  const dock = document.getElementById("cartDock");
+  const list = document.getElementById("cartList");
+  const totalEl = document.getElementById("cartTotal");
+  const items = STATE.cart;
+
+  if(items.length===0){
+    list.innerHTML = `<li class="muted">${t("cart.empty")}</li>`;
+    totalEl.textContent = "0";
+    dock.style.display = "none";
+    return;
+  }
+
+  dock.style.display = "block";
+  let sum = 0;
+  list.innerHTML = items.map((c,i)=> {
+    sum += c.total;
+    const opts = [];
+    if(c.size) opts.push(c.size);
+    if(c.addons?.length) opts.push("Add-ons: "+c.addons.join(", "));
+    if(c.choose?.length) opts.push(...c.choose.filter(k=>k.value).map(k=>`${k.label}: ${k.value}`));
+    const notes = c.notes? `<div class="meta">📝 ${c.notes}</div>`:"";
+    return `<li>
+      <div class="flex">
+        <div><b>${c.name}</b> × ${c.qty}<div class="meta">${opts.join(" | ")||""}</div>${notes}</div>
+        <div>₹${c.total}</div>
+      </div>
+      <div class="flex" style="margin-top:6px">
+        <button class="btn" style="background:#fff;color:#3a2c1a;border:1px solid var(--border)" onclick="removeItem(${i})">Remove</button>
+      </div>
+    </li>`;
+  }).join("");
+
+  totalEl.textContent = sum;
+  if(open) dock.style.display = "block";
+}
+
+function removeItem(idx){
+  STATE.cart.splice(idx,1);
+  updateCart();
+}
+
+/* ===================== CHECKOUT ENHANCEMENTS ===================== */
+function generateOrderID() {
+  return 'ORD-' + Math.floor(Math.random()*90000+10000);
+}
+
+document.getElementById("checkoutBtn").onclick = () => {
+  if(STATE.cart.length===0) return alert(t("cart.empty"));
+
+  const orderID = generateOrderID();
+  const totalAmount = STATE.cart.reduce((sum,c)=>sum+c.total,0);
+
+  // Create checkout modal
+  const backdrop = document.createElement("div");
+  backdrop.className = "backdrop";
+  backdrop.innerHTML = `
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="m-head">
+        <h3>Checkout</h3>
+        <button class="btn" style="margin-left:auto;background:#fff;color:#3a2c1a;border:1px solid var(--border)" onclick="closeModal(this)">✕</button>
+      </div>
+      <div class="m-body">
+        <p><b>Total Amount:</b> ₹${totalAmount}</p>
+        <div class="group">
+          <b>Split Payment</b>
+          <input type="number" id="splitCount" min="1" value="1" class="input" placeholder="Number of people to split"/>
+        </div>
+        <div class="group">
+          <b>Payment Method</b>
+          <div>
+            <label class="pill"><input type="radio" name="payMethod" value="qr" checked> Pay via QR</label>
+            <label class="pill"><input type="radio" name="payMethod" value="upi"> UPI ID</label>
+            <label class="pill"><input type="radio" name="payMethod" value="netbanking"> Netbanking</label>
+            <label class="pill"><input type="radio" name="payMethod" value="waiter"> Call Waiter to Collect</label>
+          </div>
+        </div>
+        <div class="group" id="upiField" style="display:none">
+          <label>Enter UPI ID</label>
+          <input type="text" class="input" id="upiInput" placeholder="example@upi"/>
+        </div>
+      </div>
+      <div class="m-foot">
+        <button class="btn" style="background:#fff;color:#3a2c1a;border:1px solid var(--border)" onclick="closeModal(this)">Cancel</button>
+        <button class="btn" onclick="confirmCheckout('${orderID}')">Confirm Payment</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(backdrop);
+
+  // Show/hide UPI field based on method
+  backdrop.querySelectorAll('input[name="payMethod"]').forEach(radio => {
+    radio.onchange = () => {
+      const upiField = document.getElementById("upiField");
+      upiField.style.display = (radio.value==="upi") ? "block" : "none";
+    };
+  });
+};
+
+function confirmCheckout(orderID){
+  const modal = getModalEl();
+  const totalAmount = STATE.cart.reduce((sum,c)=>sum+c.total,0);
+  const split = parseInt(modal.querySelector("#splitCount").value)||1;
+  const method = modal.querySelector('input[name="payMethod"]:checked').value;
+  const upiID = modal.querySelector("#upiInput")?.value || "";
+
+  let paymentMsg = "";
+  switch(method){
+    case "qr": paymentMsg = "Please scan the QR code at your table to pay."; break;
+    case "upi": paymentMsg = `Please pay ₹${(totalAmount/split).toFixed(2)} to UPI ID: ${upiID || "[missing]"}.`; break;
+    case "netbanking": paymentMsg = `Netbanking selected. Amount per person: ₹${(totalAmount/split).toFixed(2)}.`; break;
+    case "waiter": paymentMsg = "A waiter will come to collect your payment at your table."; break;
+  }
+
+  closeModal(modal.querySelector("button"));
+
+  alert(`✅ Thank you for ordering with us!\n\nOrder ID: ${orderID}\nTotal: ₹${totalAmount}\nSplit among: ${split} person(s)\nPayment: ${method.toUpperCase()}\n\n${paymentMsg}\n\nYour order will take approximately 15-20 minutes to prepare. Enjoy!`);
+fetch("/api/order", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    customer_id: STATE.user?.id || 0,
+    order_id: orderID,
+    order_details: STATE.cart,
+    total_amount: totalAmount,
+    payment_method: method
+  })
+})
+.then(res => res.json())
+.then(d => console.log("Order saved:", d))
+.catch(e => console.error(e));
+
+  // Clear cart after checkout
+  STATE.cart = [];
+  updateCart();
+}
+
+/* ===================== INIT ===================== */
+function ensureImages(){
+  // if any image fails, set a neutral fallback
+  document.querySelectorAll("img").forEach(img=>{
+    img.onerror = function(){ this.onerror=null; this.src="https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?auto=format&fit=crop&w=900&q=80"; };
+  });
+}
+window.addEventListener("load", ensureImages);
+</script>
+
+</body>
+</html>
+
+>>>>>>> origin/main

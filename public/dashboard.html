@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html>
 <head>
@@ -119,4 +120,127 @@
     </script>
 
 </body>
+=======
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>The Rustic Brew - Cloud Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f1ea;
+            margin: 0;
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 35px;
+        }
+
+        .dashboard {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: white;
+            width: 220px;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .card h2 {
+            margin-bottom: 15px;
+        }
+
+        .value {
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        .info {
+            margin-top: 35px;
+            line-height: 2;
+            font-size: 17px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>☕ The Rustic Brew - Cloud Dashboard</h1>
+
+    <div class="dashboard">
+
+        <div class="card">
+            <h2>CPU Usage</h2>
+            <div class="value" id="cpu">--%</div>
+        </div>
+
+        <div class="card">
+            <h2>Memory Usage</h2>
+            <div class="value" id="memory">--%</div>
+        </div>
+
+        <div class="card">
+            <h2>Disk Usage</h2>
+            <div class="value" id="disk">--%</div>
+        </div>
+
+    </div>
+
+    <div class="info">
+        <div>Server: <b id="hostname">--</b></div>
+        <div>Platform: <b id="platform">--</b></div>
+        <div>Last Updated: <b id="updated">--</b></div>
+    </div>
+
+    <script>
+
+        async function updateDashboard() {
+
+            try {
+
+                const response = await fetch("/api/stats");
+                const data = await response.json();
+
+                document.getElementById("cpu").textContent =
+                    data.cpu + "%";
+
+                document.getElementById("memory").textContent =
+                    data.memory + "%";
+
+                document.getElementById("disk").textContent =
+                    data.disk + "%";
+
+                document.getElementById("hostname").textContent =
+                    data.hostname;
+
+                document.getElementById("platform").textContent =
+                    data.platform;
+
+                document.getElementById("updated").textContent =
+                    new Date().toLocaleTimeString();
+
+            } catch (error) {
+
+                console.error("Dashboard error:", error);
+
+            }
+        }
+
+        updateDashboard();
+
+        setInterval(updateDashboard, 3000);
+
+    </script>
+
+</body>
+>>>>>>> origin/main
 </html>
